@@ -1,19 +1,16 @@
-import type { Color } from "./types";
+import type { Color } from './types';
 
 export enum Format {
-    HSL = "HSL"
+  HSL = 'HSL',
 }
 
 export const colorToString = (color: Color, format: Format): string => {
-    switch (format) {
-        case Format.HSL:
-            const { hue,
-                saturation, lightness
-            } = color.hsl
-            return `hsl(${hue},${saturation}%,${lightness}%)`
+  const { hue, saturation, lightness } = color.hsl;
+  switch (format) {
+    case Format.HSL:
+      return `hsl(${hue},${saturation}%,${lightness}%)`;
 
-
-        default:
-            return '';
-    }
-}
+    default:
+      return '';
+  }
+};

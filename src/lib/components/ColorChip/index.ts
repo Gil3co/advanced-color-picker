@@ -1,2 +1,2 @@
-import ColorChip from "./ColorChip.svelte"
-export {ColorChip}
+import ColorChip from './ColorChip.svelte';
+export { ColorChip };
