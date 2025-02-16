@@ -14,84 +14,150 @@
     primaryColor = storeValue.primaryColor;
   });
 
-  const trackBg = ({
+  const calculateInputBg = ({
     type = '',
     steps = 0,
     props = [],
-    // alpha = 'var(--picker-alpha)',
+    alpha = 100,
   }) => {
     const grad = [];
     const propVal = (prop, i) => (typeof prop === 'function' ? prop(i) : prop);
     for (let i = 0; i < steps; i += 1) {
-      const vals = props.map((val) => propVal(val, i)).join(' ');
-      // if (alpha) {
-      //   grad.push(`${type}(${vals} / ${propVal(alpha, i)})`);
-      // } else {
-      grad.push(`${type}(${vals})`);
-      // }
+      const colorVals = props.map((val) => propVal(val, i)).join(' ');
+      if (alpha) {
+        grad.push(`${type}(${colorVals} / ${propVal(alpha, i)})`);
+      } else {
+        grad.push(`${type}(${colorVals})`);
+      }
     }
     return `linear-gradient(to right, ${grad.join(', ')})`;
   };
-  const hslBg = ({
-    hue = 'var(--picker-hue)',
-    sat = 'calc(var(--picker-saturation) * 1%)',
-    lig = 'calc(var(--picker-luminosity) * 1%)',
+  const calculateHslBg = ({
+    hue = primaryColor.hsl.hue,
+    sat = `calc(${primaryColor.hsl.saturation} * 1%)`,
+    lig = `calc(${primaryColor.hsl.lightness} * 1%)`,
     ...props
-  }) => trackBg({ type: 'hsl', props: [hue, sat, lig], ...props });
+  }) => calculateInputBg({ type: 'hsl', props: [hue, sat, lig], ...props });
 </script>
 
 <h1>Advanced Color Palette</h1>
 <ColorChip color={colorToString(primaryColor, Format.HSL)} />
-<div>
-  <input
-    type="range"
-    data-model="hsl"
-    name="hue"
-    min={0}
-    max={360}
-    step={1}
-    value={primaryColor.hsl.hue}
-    style:--bg-color={hslBg({
-      hue: (v) => v,
-      steps: 360,
-      sat: `${primaryColor.hsl.saturation}%`,
-      lig: `${primaryColor.hsl.lightness}%`,
-    })}
-    on:input={({ target: { value } }) => {
-      colorsStore.set({
-        primaryColor: { hsl: { ...primaryColor.hsl, hue: parseInt(value) } },
-      });
-    }}
-  />
-  <input
-    type="range"
-    data-model="saturation"
-    name="saturation"
-    min={0}
-    max={100}
-    step={1}
-    value={primaryColor.hsl.saturation}
-    style:--bg-color={hslBg({
-      hue: (v) => v,
-      steps: 100,
-      sat: (s) => (s ? '100%' : '0%'),
-      steps: 2,
-      lig: `${primaryColor.hsl.lightness}%`,
-    })}
-    on:input={({ target: { value } }) => {
-      colorsStore.set({
-        primaryColor: {
-          hsl: { ...primaryColor.hsl, saturation: parseInt(value) },
-        },
-      });
-    }}
-  />
+<p>
+  {colorToString(primaryColor, Format.Hex)}
+</p>
+<div class="colors">
+  <div class="color">
+    <input
+      type="range"
+      data-model="hsl"
+      name="hue"
+      min={0}
+      max={360}
+      step={1}
+      value={primaryColor.hsl.hue}
+      style:--bg-color={calculateHslBg({
+        hue: (v) => v,
+        steps: 360,
+      })}
+      oninput={({ currentTarget: { value } }) => {
+        colorsStore.set({
+          primaryColor: { hsl: { ...primaryColor.hsl, hue: parseInt(value) } },
+        });
+      }}
+    />
+    <input
+      value={primaryColor.hsl.hue}
+      type="number"
+      oninput={({ currentTarget: { value } }) => {
+        colorsStore.set({
+          primaryColor: { hsl: { ...primaryColor.hsl, hue: parseInt(value) } },
+        });
+      }}
+    />
+  </div>
+  <div class="color">
+    <input
+      type="range"
+      data-model="hsl"
+      name="saturation"
+      min={0}
+      max={100}
+      step={1}
+      value={primaryColor.hsl.saturation}
+      style:--bg-color={calculateHslBg({
+        steps: 2,
+        sat: (s) => (s ? '100%' : '0%'),
+      })}
+      oninput={({ currentTarget: { value } }) => {
+        colorsStore.set({
+          primaryColor: {
+            hsl: { ...primaryColor.hsl, saturation: parseInt(value) },
+          },
+        });
+      }}
+    />
+    <input
+      value={primaryColor.hsl.saturation}
+      type="number"
+      oninput={({ currentTarget: { value } }) => {
+        colorsStore.set({
+          primaryColor: {
+            hsl: { ...primaryColor.hsl, saturation: parseInt(value) },
+          },
+        });
+      }}
+    />
+  </div>
+  <div class="color">
+    <input
+      type="range"
+      data-model="hsl"
+      name="lightness"
+      min={0}
+      max={100}
+      step={1}
+      value={primaryColor.hsl.lightness}
+      style:--bg-color={calculateHslBg({
+        steps: 3,
+        lig: (l) => `${l * 50}%`,
+      })}
+      oninput={({ currentTarget: { value } }) => {
+        colorsStore.set({
+          primaryColor: {
+            hsl: { ...primaryColor.hsl, lightness: parseInt(value) },
+          },
+        });
+      }}
+    />
+    <input
+      value={primaryColor.hsl.lightness}
+      type="number"
+      oninput={({ currentTarget: { value } }) => {
+        colorsStore.set({
+          primaryColor: {
+            hsl: { ...primaryColor.hsl, lightness: parseInt(value) },
+          },
+        });
+      }}
+    />
+  </div>
 </div>
 
 <style>
-  input {
+  .colors {
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.5rem;
+  }
+
+  .color {
+    display: flex;
+    column-gap: 0.25rem;
+  }
+  input[type='range'] {
     background: var(--bg-color);
     -webkit-appearance: none;
+    appearance: none;
     height: 1.25rem;
     width: 50rem;
     border-radius: 15px;
@@ -109,5 +175,17 @@
 
   input[type='range']:focus {
     outline: none;
+  }
+
+  input[type='number'] {
+    width: 2rem;
+    text-align: center;
+    border-radius: 8px;
+    background-color: lightgray;
+    border: none;
+  }
+
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
   }
 </style>
