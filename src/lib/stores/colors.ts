@@ -16,6 +16,7 @@ export const initialColor: Color = {
     hue: createRandomNumber({ high: 240 }),
     saturation: createRandomNumber({ high: 100 }),
     lightness: createRandomNumber({ high: 100 }),
+    alpha: 1,
   },
 };
 
