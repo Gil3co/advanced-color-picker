@@ -1,9 +1,6 @@
 <script lang="ts">
-  import {
-    ColorFormat,
-    colorToString,
-    getOptimalTextColor,
-  } from '$lib/helpers';
+  import { ColorFormat } from '$lib/consts';
+  import { colorToString, getOptimalTextColor } from '$lib/helpers';
   import { colorsStore, initialColor } from '$lib/stores';
   import type { Color, OnInputEvent } from '$lib/types';
 
@@ -78,7 +75,7 @@
   }
 
   input[type='number'] {
-    width: 1.5rem;
+    width: 2.25rem;
     padding: 0.25rem;
     text-align: center;
     border-radius: 8px;

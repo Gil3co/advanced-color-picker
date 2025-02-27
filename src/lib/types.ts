@@ -5,8 +5,11 @@ export type HSL = {
   alpha: number;
 };
 
+export type Hex = `#${string}`;
+
 export type Color = {
   hsl: HSL;
+  hex: Hex;
 };
 
 export type OnInputEvent = Event & {

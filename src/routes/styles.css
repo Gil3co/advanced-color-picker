@@ -1,0 +1,14 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #e5e5e6;
+}
+
+button {
+    cursor: pointer;
+    background-color: unset;
+    border: unset;
+    padding: 0;
+}

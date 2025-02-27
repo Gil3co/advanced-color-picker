@@ -1,14 +1,11 @@
-import type { Color, HSL } from './types';
+import { ColorFormat } from './consts';
+import type { Color, Hex, HSL } from './types';
 
-export enum ColorFormat {
-  HSL = 'hsl',
-  Hex = 'hex',
-}
-
-const hexToRgba = (hex: string): [number, number, number, number] => {
+const hexToRgb = (hex: string): [number, number, number] => {
   hex = hex.replace(/^#/, '');
 
-  if (hex.length === 3) {
+  // Expand short HEX (#RGBA → #RRGGBBAA)
+  if (hex.length === 3 || hex.length === 4) {
     hex = hex
       .split('')
       .map((char) => char + char)
@@ -18,9 +15,51 @@ const hexToRgba = (hex: string): [number, number, number, number] => {
   const r = parseInt(hex.substring(0, 2), 16);
   const g = parseInt(hex.substring(2, 4), 16);
   const b = parseInt(hex.substring(4, 6), 16);
+
+  return [r, g, b];
+};
+
+const hexToRgba = (hex: string): [number, number, number, number] => {
+  const [r, g, b] = hexToRgb(hex);
   const a = hex.length === 8 ? parseInt(hex.substring(6, 8), 16) / 255 : 1;
 
   return [r, g, b, a];
+};
+
+export const hexToHsla = (hex: string): HSL => {
+  const [r, g, b] = hexToRgb(hex).map((color) => color / 255);
+  const a = hex.length === 8 ? parseInt(hex.substring(6, 8), 16) / 255 : 1; // Alpha (default 1 if not provided)
+
+  // Calculate HSL
+  const max = Math.max(r, g, b),
+    min = Math.min(r, g, b);
+  let h = 0,
+    s = 0;
+  const l = (max + min) / 2;
+
+  if (max !== min) {
+    const diff = max - min;
+    s = l > 0.5 ? diff / (2 - max - min) : diff / (max + min);
+    switch (max) {
+      case r:
+        h = (g - b) / diff + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / diff + 2;
+        break;
+      case b:
+        h = (r - g) / diff + 4;
+        break;
+    }
+    h *= 60;
+  }
+
+  return {
+    hue: Math.round(h),
+    saturation: Math.round(s * 100),
+    lightness: Math.round(l * 100),
+    alpha: parseFloat(a.toFixed(2)),
+  };
 };
 
 const blendWithWhite = ([r, g, b, a]: [number, number, number, number]): [
@@ -65,7 +104,7 @@ const roundAndPadHex = (num: number): string =>
     .toString(16)
     .padStart(2, '0');
 
-const hslToHex = ({ hue, saturation, lightness, alpha }: HSL): string => {
+const hslToHex = ({ hue, saturation, lightness, alpha }: HSL): Hex => {
   lightness /= 100;
   const chroma = (saturation * Math.min(lightness, 1 - lightness)) / 100;
 
@@ -83,7 +122,7 @@ const hslToHex = ({ hue, saturation, lightness, alpha }: HSL): string => {
   return `#${calculateColorComponent(0)}${calculateColorComponent(8)}${calculateColorComponent(4)}${alphaHex}`;
 };
 
-export const colorToString = (color: Color, format: ColorFormat): string => {
+export const colorToString = (color: Color, format: ColorFormat) => {
   const { hue, saturation, lightness, alpha } = color.hsl;
   switch (format) {
     case ColorFormat.HSL:
@@ -92,6 +131,33 @@ export const colorToString = (color: Color, format: ColorFormat): string => {
       return hslToHex(color.hsl);
     default:
       return '';
+  }
+};
+
+export type TTranslateColors<Format extends keyof Color> = {
+  from: ColorFormat;
+  color: Color[Format];
+};
+
+export const getColorUpdate = <Format extends keyof Color>({
+  from,
+  color,
+}: TTranslateColors<Format>): Color => {
+  switch (from) {
+    case ColorFormat.HSL: {
+      const hsl = color as HSL;
+      return {
+        hsl,
+        hex: hslToHex(hsl),
+      };
+    }
+    case ColorFormat.Hex: {
+      const hex = color as Hex;
+      return {
+        hex,
+        hsl: hexToHsla(hex),
+      };
+    }
   }
 };
 

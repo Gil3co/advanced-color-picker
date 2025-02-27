@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { hueValues } from '$lib/consts';
+  import { ColorFormat, hueValues } from '$lib/consts';
   import { calculateHslBg } from '$lib/helpers';
   import { colorsStore, initialColor } from '$lib/stores';
-  import type { Color, HSL, OnInputEvent } from '$lib/types';
   import { ColorSlider } from '../ColorSlider';
+  import type { Color, HSL, OnInputEvent } from '$lib/types';
 
   let primaryColor = $state<Color>(initialColor);
 
@@ -14,10 +14,9 @@
   const hslOnInput =
     (key: keyof HSL) =>
     ({ currentTarget: { value } }: OnInputEvent) => {
-      colorsStore.set({
-        primaryColor: {
-          hsl: { ...primaryColor.hsl, [key]: parseFloat(value) },
-        },
+      colorsStore.updateColors(ColorFormat.HSL, {
+        ...primaryColor.hsl,
+        [key]: parseFloat(value),
       });
     };
 </script>
