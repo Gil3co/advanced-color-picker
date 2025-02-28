@@ -12,3 +12,7 @@ button {
     border: unset;
     padding: 0;
 }
+
+input {
+    border: unset
+}

@@ -122,7 +122,7 @@ const hslToHex = ({ hue, saturation, lightness, alpha }: HSL): Hex => {
   return `#${calculateColorComponent(0)}${calculateColorComponent(8)}${calculateColorComponent(4)}${alphaHex}`;
 };
 
-export const colorToString = (color: Color, format: ColorFormat) => {
+export const colorToString = (color: Color, format: ColorFormat): string => {
   const { hue, saturation, lightness, alpha } = color.hsl;
   switch (format) {
     case ColorFormat.HSL:
@@ -132,6 +132,16 @@ export const colorToString = (color: Color, format: ColorFormat) => {
     default:
       return '';
   }
+};
+
+export const parseHlsaStringToHlsa = (hslaString: string): HSL => {
+  const [hsl, a] = hslaString.split(' / ');
+  const [h, s, l] = hsl.split(' ');
+  const alpha = a ? parseFloat(a) : 1;
+  const hue = parseFloat(h);
+  const saturation = parseFloat(s.replace('%', ''));
+  const lightness = parseFloat(l.replace('%', ''));
+  return { alpha, hue, saturation, lightness };
 };
 
 export type TTranslateColors<Format extends keyof Color> = {

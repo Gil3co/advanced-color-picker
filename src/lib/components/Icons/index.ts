@@ -1,3 +1,4 @@
+import CheckMarkIcon from './CheckMarkIcon.svelte';
 import CopyIcon from './CopyIcon.svelte';
 
-export { CopyIcon };
+export { CheckMarkIcon, CopyIcon };

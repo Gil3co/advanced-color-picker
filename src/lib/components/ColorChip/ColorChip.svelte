@@ -12,7 +12,7 @@
   div {
     background-color: var(--background-color);
     height: 7rem;
-    width: 6rem;
+    width: 7rem;
     border-radius: 4px;
   }
 </style>

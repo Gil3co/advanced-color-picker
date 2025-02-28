@@ -56,7 +56,7 @@
     -webkit-appearance: none;
     appearance: none;
     height: 1.25rem;
-    width: 50rem;
+    width: 100%;
     border-radius: 15px;
   }
 

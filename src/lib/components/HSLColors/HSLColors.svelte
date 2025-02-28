@@ -1,9 +1,14 @@
 <script lang="ts">
   import { ColorFormat, hueValues } from '$lib/consts';
-  import { calculateHslBg } from '$lib/helpers';
+  import {
+    calculateHslBg,
+    colorToString,
+    parseHlsaStringToHlsa,
+  } from '$lib/helpers';
   import { colorsStore, initialColor } from '$lib/stores';
   import { ColorSlider } from '../ColorSlider';
   import type { Color, HSL, OnInputEvent } from '$lib/types';
+  import { CopyToClipboard } from '../CopyToClipboard';
 
   let primaryColor = $state<Color>(initialColor);
 
@@ -63,6 +68,20 @@
       colorFromColorsStore: primaryColor,
     })}
   />
+  <div class="hsl-container">
+    <input
+      class="hsl"
+      value={colorToString(primaryColor, ColorFormat.HSL)}
+      oninput={({ currentTarget: { value: rawValue } }) => {
+        const value = rawValue.replace('hsla(', '').replace(')', '');
+        const hslValue = parseHlsaStringToHlsa(value);
+        colorsStore.updateColors(ColorFormat.HSL, hslValue);
+      }}
+    />
+    <CopyToClipboard
+      valueToCopy={colorToString(primaryColor, ColorFormat.HSL)}
+    />
+  </div>
 </div>
 
 <style>
@@ -70,5 +89,21 @@
     display: flex;
     flex-direction: column;
     row-gap: 0.5rem;
+    width: 100%;
+  }
+
+  .hsl-container {
+    display: flex;
+    align-items: center;
+    column-gap: 1.5rem;
+    padding-right: 0.25rem;
+  }
+
+  .hsl {
+    background-color: #e5e5e6;
+    text-align: center;
+    width: 100%;
+    height: 1.5rem;
+    border-radius: 4px;
   }
 </style>
