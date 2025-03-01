@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import type { Color, Hex, HSL } from '$lib/types';
-import { colorToString, getColorUpdate } from '$lib/helpers';
+import { colorToString, getColorUpdate, hslToRgb } from '$lib/helpers';
 import { ColorFormat } from '$lib/consts';
 
 const createRandomNumber = ({
@@ -24,6 +24,7 @@ export const initialColor: Color = ((): Color => {
   return {
     hsl,
     hex: colorToString({ hsl } as Color, ColorFormat.Hex) as Hex,
+    rgb: hslToRgb(hsl),
   };
 })();
 

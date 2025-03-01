@@ -8,6 +8,7 @@
     ColorFormat,
     HSLColors,
     HexColor,
+    RGBColors,
   } from '$lib';
   import type { Color } from '$lib/types';
 
@@ -27,6 +28,7 @@
 
   <div class="color-schemes">
     <HSLColors />
+    <RGBColors />
   </div>
 </div>
 
@@ -56,5 +58,8 @@
   .color-schemes {
     width: 100%;
     max-width: 40rem;
+    display: flex;
+    flex-direction: column;
+    row-gap: 3rem;
   }
 </style>

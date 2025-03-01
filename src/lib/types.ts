@@ -5,11 +5,19 @@ export type HSL = {
   alpha: number;
 };
 
+export type RGB = {
+  red: number;
+  green: number;
+  blue: number;
+  alpha: number;
+};
+
 export type Hex = `#${string}`;
 
 export type Color = {
   hsl: HSL;
   hex: Hex;
+  rgb: RGB;
 };
 
 export type OnInputEvent = Event & {

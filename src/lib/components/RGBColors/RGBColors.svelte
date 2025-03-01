@@ -1,38 +1,32 @@
 <script lang="ts">
-  import { ColorFormat, hueValues } from '$lib/consts';
+  import { ColorFormat, hueValues, rgbValues } from '$lib/consts';
   import {
     calculateHslBg,
+    calculateRgbBg,
     colorToString,
     parseHslaStringToHsla,
   } from '$lib/helpers';
   import { colorsStore, initialColor } from '$lib/stores';
   import { ColorSlider } from '../ColorSlider';
-  import type { Color, HSL, OnInputEvent } from '$lib/types';
+  import type { Color, OnInputEvent, RGB } from '$lib/types';
   import { CopyToClipboard } from '../CopyToClipboard';
 
   let primaryColor = $state<Color>(initialColor);
-
+  const maxValue = 255;
   colorsStore.subscribe((storeValue) => {
     primaryColor = storeValue.primaryColor;
   });
 
-  const maxValuePerKey: Record<keyof HSL, number> = {
-    hue: 360,
-    saturation: 100,
-    lightness: 100,
-    alpha: 1,
-  };
-
-  const hslOnInput =
-    (key: keyof HSL) =>
+  const rgbOnInput =
+    (key: keyof RGB) =>
     ({ currentTarget: { value } }: OnInputEvent) => {
       let floatValue = parseFloat(value);
       if (Number.isNaN(floatValue)) floatValue = 0;
-      if (floatValue > maxValuePerKey[key] || floatValue < 0) {
-        floatValue = primaryColor.hsl[key];
+      if (floatValue > maxValue || floatValue < 0) {
+        floatValue = primaryColor.rgb[key];
       }
-      colorsStore.updateColors(ColorFormat.HSL, {
-        ...primaryColor.hsl,
+      colorsStore.updateColors(ColorFormat.RGB, {
+        ...primaryColor.rgb,
         [key]: floatValue,
       });
     };
@@ -40,41 +34,38 @@
 
 <div class="colors">
   <ColorSlider
-    value={primaryColor.hsl.hue}
-    onInput={hslOnInput('hue')}
-    maxValue={maxValuePerKey['hue']}
-    bgColor={calculateHslBg({
-      hue: hueValues,
-      steps: 360,
+    value={primaryColor.rgb.red}
+    onInput={rgbOnInput('red')}
+    {maxValue}
+    bgColor={calculateRgbBg({
+      red: rgbValues,
       colorFromColorsStore: primaryColor,
     })}
   />
   <ColorSlider
-    value={primaryColor.hsl.saturation}
-    onInput={hslOnInput('saturation')}
-    maxValue={maxValuePerKey['saturation']}
-    bgColor={calculateHslBg({
-      saturation: ['0%', '100%'],
-      steps: 2,
+    value={primaryColor.rgb.green}
+    onInput={rgbOnInput('green')}
+    {maxValue}
+    bgColor={calculateRgbBg({
+      green: rgbValues,
       colorFromColorsStore: primaryColor,
     })}
   />
   <ColorSlider
-    value={primaryColor.hsl.lightness}
-    onInput={hslOnInput('lightness')}
-    maxValue={maxValuePerKey['lightness']}
-    bgColor={calculateHslBg({
-      lightness: ['0%', '50%', '100%'],
-      steps: 3,
+    value={primaryColor.rgb.blue}
+    onInput={rgbOnInput('blue')}
+    {maxValue}
+    bgColor={calculateRgbBg({
+      blue: rgbValues,
       colorFromColorsStore: primaryColor,
     })}
   />
   <ColorSlider
-    value={primaryColor.hsl.alpha}
-    onInput={hslOnInput('alpha')}
-    maxValue={maxValuePerKey['alpha']}
+    value={primaryColor.rgb.alpha}
+    onInput={rgbOnInput('alpha')}
+    maxValue={1}
     step={0.01}
-    bgColor={calculateHslBg({
+    bgColor={calculateRgbBg({
       alpha: [0, 1],
       steps: 2,
       colorFromColorsStore: primaryColor,
@@ -104,14 +95,14 @@
     width: 100%;
   }
 
-  .hsl-container {
+  .rgb-container {
     display: flex;
     align-items: center;
     column-gap: 1rem;
     padding-right: 0.25rem;
   }
 
-  .hsl {
+  .rgb {
     background-color: #e5e5e6;
     text-align: center;
     width: 100%;

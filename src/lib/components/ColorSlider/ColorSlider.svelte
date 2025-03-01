@@ -33,7 +33,7 @@
     oninput={onInput}
   />
   <input
-    {value}
+    bind:value
     type="number"
     oninput={onInput}
     {step}
