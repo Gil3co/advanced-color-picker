@@ -77,13 +77,15 @@ export const colorToString = (
   switch (format) {
     case ColorFormat.HSL: {
       const { hue, saturation, lightness, alpha } = hsl;
-      return `hsla(${hue} ${saturation}% ${lightness}%${alpha !== 1 ? ` / ${alpha}` : ''})`;
+      const prefix = alpha !== 1 ? 'hsla' : 'hsl';
+      return `${prefix}(${hue} ${saturation}% ${lightness}%${alpha !== 1 ? ` / ${alpha}` : ''})`;
     }
     case ColorFormat.Hex:
       return hslToHex(hsl);
     case ColorFormat.RGB: {
       const { red, green, blue, alpha } = rgb;
-      return `rgba(${red} ${green} ${blue}${alpha !== 1 ? ` / ${alpha}` : ''})`;
+      const prefix = alpha !== 1 ? 'rgba' : 'rgb';
+      return `${prefix}(${red} ${green} ${blue}${alpha !== 1 ? ` / ${alpha}` : ''})`;
     }
     default:
       return '';

@@ -12,7 +12,7 @@
   import { CopyToClipboard } from '../CopyToClipboard';
 
   const hslaRegex =
-    /^hsla\(\s*(\d{1,3})\s+(\d{1,3}%)\s+(\d{1,3}%)(\s*\/\s*(0?\.?\d+|1(\.0)?))?\s*\)$/;
+    /^hsla?\(\s*(\d{1,3})\s+(\d{1,3}%)\s+(\d{1,3}%)(\s*\/\s*(0?\.?\d+|1(\.0)?))?\s*\)$/;
 
   let primaryColor = $state<Color>(initialColor);
   let colorString = $state(colorToString(initialColor, ColorFormat.HSL));
@@ -84,7 +84,10 @@
       class="hsl"
       bind:value={colorString}
       oninput={({ currentTarget: { value: rawValue } }) => {
-        const value = rawValue.replace('hsla(', '').replace(')', '');
+        const value = rawValue
+          .replace('hsla(', '')
+          .replace('hsl(', '')
+          .replace(')', '');
         const hslValue = parseHslaStringToHsla(value);
         const isValid = hslaRegex.test(rawValue) && validateHsl(hslValue);
 
