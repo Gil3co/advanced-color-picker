@@ -40,9 +40,7 @@
     min={0}
     max={maxValue}
     style:--bg-color={colorToString(primaryColor, ColorFormat.HSL)}
-    style:--font-color={getOptimalTextColor(
-      colorToString(primaryColor, ColorFormat.HSL),
-    )}
+    style:--font-color={getOptimalTextColor(primaryColor.hsl)}
   />
 </div>
 

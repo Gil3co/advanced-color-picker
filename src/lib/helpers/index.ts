@@ -1,10 +1,11 @@
 export * from './background';
 export * from './contrast';
 export * from './validators';
+export * from './shared';
 
 import { ColorFormat } from '../consts';
 import type { Color, Hex, HSL, RGB } from '../types';
-import { hexToRgb } from './shared';
+import { hexToRgb, hslToRgb } from './shared';
 
 const prepareRgbForHsl = ({ red, green, blue, alpha }: RGB): RGB => {
   return {
@@ -62,27 +63,6 @@ const rgbToHex = ({ red, green, blue, alpha }: RGB): Hex => {
   const alphaHex =
     alpha !== 1 ? rgbNumToHexAndPad(Math.round(alpha * 255)) : '';
   return `#${rgbNumToHexAndPad(red)}${rgbNumToHexAndPad(green)}${rgbNumToHexAndPad(blue)}${alphaHex}`;
-};
-
-export const hslToRgb = ({ hue, saturation, lightness, alpha }: HSL): RGB => {
-  lightness /= 100;
-  const chroma = (saturation * Math.min(lightness, 1 - lightness)) / 100;
-
-  const calculateColorComponent = (n: number): number => {
-    const intermediateHue = (n + hue / 30) % 12;
-    const color =
-      lightness -
-      chroma *
-        Math.max(Math.min(intermediateHue - 3, 9 - intermediateHue, 1), -1);
-    return Math.round(color * 255);
-  };
-
-  return {
-    red: calculateColorComponent(0),
-    green: calculateColorComponent(8),
-    blue: calculateColorComponent(4),
-    alpha,
-  };
 };
 
 const hslToHex = (hsl: HSL): Hex => {
