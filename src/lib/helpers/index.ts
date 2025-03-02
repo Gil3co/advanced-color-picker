@@ -1,5 +1,6 @@
 export * from './background';
 export * from './contrast';
+export * from './validators';
 
 import { ColorFormat } from '../consts';
 import type { Color, Hex, HSL, RGB } from '../types';
@@ -58,7 +59,8 @@ const rgbNumToHexAndPad = (num: number): string =>
   num.toString(16).padStart(2, '0');
 
 const rgbToHex = ({ red, green, blue, alpha }: RGB): Hex => {
-  const alphaHex = alpha !== 1 ? rgbNumToHexAndPad(alpha) : '';
+  const alphaHex =
+    alpha !== 1 ? rgbNumToHexAndPad(Math.round(alpha * 255)) : '';
   return `#${rgbNumToHexAndPad(red)}${rgbNumToHexAndPad(green)}${rgbNumToHexAndPad(blue)}${alphaHex}`;
 };
 
@@ -79,7 +81,7 @@ export const hslToRgb = ({ hue, saturation, lightness, alpha }: HSL): RGB => {
     red: calculateColorComponent(0),
     green: calculateColorComponent(8),
     blue: calculateColorComponent(4),
-    alpha: Math.round(alpha),
+    alpha,
   };
 };
 
@@ -116,6 +118,13 @@ export const parseHslaStringToHsla = (hslaString: string): HSL => {
   const saturation = parseFloat(s.replace('%', ''));
   const lightness = parseFloat(l.replace('%', ''));
   return { alpha, hue, saturation, lightness };
+};
+
+export const parseRgbaStringToRgba = (rbgaString: string): RGB => {
+  const [rgb, a] = rbgaString.split(' / ');
+  const [red, green, blue] = rgb.split(' ').map((color) => parseFloat(color));
+  const alpha = a ? parseFloat(a) : 1;
+  return { alpha, red, green, blue };
 };
 
 export type TTranslateColors<Format extends keyof Color> = {

@@ -1,34 +1,33 @@
 <script lang="ts">
-  import { ColorFormat, hueValues } from '$lib/consts';
+  import { ColorFormat, hslMaxValuePerKey, hueValues } from '$lib/consts';
   import {
     calculateHslBg,
     colorToString,
     parseHslaStringToHsla,
+    validateHsl,
   } from '$lib/helpers';
   import { colorsStore, initialColor } from '$lib/stores';
-  import { ColorSlider } from '../ColorSlider';
   import type { Color, HSL, OnInputEvent } from '$lib/types';
+  import { ColorSlider } from '../ColorSlider';
   import { CopyToClipboard } from '../CopyToClipboard';
 
+  const hslaRegex =
+    /^hsla\(\s*(\d{1,3})\s+(\d{1,3}%)\s+(\d{1,3}%)(\s*\/\s*(0?\.?\d+|1(\.0)?))?\s*\)$/;
+
   let primaryColor = $state<Color>(initialColor);
+  let colorString = $state(colorToString(initialColor, ColorFormat.HSL));
 
   colorsStore.subscribe((storeValue) => {
     primaryColor = storeValue.primaryColor;
+    colorString = colorToString(storeValue.primaryColor, ColorFormat.HSL);
   });
-
-  const maxValuePerKey: Record<keyof HSL, number> = {
-    hue: 360,
-    saturation: 100,
-    lightness: 100,
-    alpha: 1,
-  };
 
   const hslOnInput =
     (key: keyof HSL) =>
     ({ currentTarget: { value } }: OnInputEvent) => {
       let floatValue = parseFloat(value);
       if (Number.isNaN(floatValue)) floatValue = 0;
-      if (floatValue > maxValuePerKey[key] || floatValue < 0) {
+      if (floatValue > hslMaxValuePerKey[key] || floatValue < 0) {
         floatValue = primaryColor.hsl[key];
       }
       colorsStore.updateColors(ColorFormat.HSL, {
@@ -42,7 +41,7 @@
   <ColorSlider
     value={primaryColor.hsl.hue}
     onInput={hslOnInput('hue')}
-    maxValue={maxValuePerKey['hue']}
+    maxValue={hslMaxValuePerKey['hue']}
     bgColor={calculateHslBg({
       hue: hueValues,
       steps: 360,
@@ -52,7 +51,7 @@
   <ColorSlider
     value={primaryColor.hsl.saturation}
     onInput={hslOnInput('saturation')}
-    maxValue={maxValuePerKey['saturation']}
+    maxValue={hslMaxValuePerKey['saturation']}
     bgColor={calculateHslBg({
       saturation: ['0%', '100%'],
       steps: 2,
@@ -62,7 +61,7 @@
   <ColorSlider
     value={primaryColor.hsl.lightness}
     onInput={hslOnInput('lightness')}
-    maxValue={maxValuePerKey['lightness']}
+    maxValue={hslMaxValuePerKey['lightness']}
     bgColor={calculateHslBg({
       lightness: ['0%', '50%', '100%'],
       steps: 3,
@@ -72,7 +71,7 @@
   <ColorSlider
     value={primaryColor.hsl.alpha}
     onInput={hslOnInput('alpha')}
-    maxValue={maxValuePerKey['alpha']}
+    maxValue={hslMaxValuePerKey['alpha']}
     step={0.01}
     bgColor={calculateHslBg({
       alpha: [0, 1],
@@ -83,16 +82,17 @@
   <div class="hsl-container">
     <input
       class="hsl"
-      value={colorToString(primaryColor, ColorFormat.HSL)}
+      bind:value={colorString}
       oninput={({ currentTarget: { value: rawValue } }) => {
         const value = rawValue.replace('hsla(', '').replace(')', '');
         const hslValue = parseHslaStringToHsla(value);
-        colorsStore.updateColors(ColorFormat.HSL, hslValue);
+        const isValid = hslaRegex.test(rawValue) && validateHsl(hslValue);
+
+        const valueToUpdate = isValid ? hslValue : primaryColor.hsl;
+        colorsStore.updateColors(ColorFormat.HSL, valueToUpdate);
       }}
     />
-    <CopyToClipboard
-      valueToCopy={colorToString(primaryColor, ColorFormat.HSL)}
-    />
+    <CopyToClipboard valueToCopy={colorString} />
   </div>
 </div>
 

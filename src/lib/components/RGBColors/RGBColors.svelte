@@ -1,20 +1,25 @@
 <script lang="ts">
-  import { ColorFormat, hueValues, rgbValues } from '$lib/consts';
+  import { ColorFormat, rgbValues } from '$lib/consts';
   import {
-    calculateHslBg,
     calculateRgbBg,
     colorToString,
-    parseHslaStringToHsla,
+    parseRgbaStringToRgba,
+    validateRgb,
   } from '$lib/helpers';
   import { colorsStore, initialColor } from '$lib/stores';
-  import { ColorSlider } from '../ColorSlider';
   import type { Color, OnInputEvent, RGB } from '$lib/types';
+  import { ColorSlider } from '../ColorSlider';
   import { CopyToClipboard } from '../CopyToClipboard';
 
+  const rgbaRegex =
+    /^rgba\(\s*(\d{1,3})\s+(\d{1,3})\s+(\d{1,3})(\s*\/\s*(0?\.?\d+|1(\.0)?))?\s*\)$/;
+
   let primaryColor = $state<Color>(initialColor);
+  let colorString = $state(colorToString(initialColor, ColorFormat.RGB));
   const maxValue = 255;
   colorsStore.subscribe((storeValue) => {
     primaryColor = storeValue.primaryColor;
+    colorString = colorToString(storeValue.primaryColor, ColorFormat.RGB);
   });
 
   const rgbOnInput =
@@ -71,19 +76,21 @@
       colorFromColorsStore: primaryColor,
     })}
   />
-  <div class="hsl-container">
+  <div class="rgb-container">
     <input
-      class="hsl"
-      value={colorToString(primaryColor, ColorFormat.HSL)}
+      class="rgb"
+      bind:value={colorString}
+      type="text"
       oninput={({ currentTarget: { value: rawValue } }) => {
-        const value = rawValue.replace('hsla(', '').replace(')', '');
-        const hslValue = parseHslaStringToHsla(value);
-        colorsStore.updateColors(ColorFormat.HSL, hslValue);
+        const value = rawValue.replace('rgba(', '').replace(')', '');
+        const rgbValue = parseRgbaStringToRgba(value);
+        const isValid = rgbaRegex.test(rawValue) && validateRgb(rgbValue);
+
+        const valueToUpdate = isValid ? rgbValue : primaryColor.rgb;
+        colorsStore.updateColors(ColorFormat.RGB, valueToUpdate);
       }}
     />
-    <CopyToClipboard
-      valueToCopy={colorToString(primaryColor, ColorFormat.HSL)}
-    />
+    <CopyToClipboard valueToCopy={colorString} />
   </div>
 </div>
 
