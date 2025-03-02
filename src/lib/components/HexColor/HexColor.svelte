@@ -14,8 +14,9 @@
 <div class="hex-container">
   <input
     class="hex"
-    value={primaryColor.hex}
-    oninput={({ currentTarget: { value } }) => {
+    bind:value={primaryColor.hex}
+    oninput={({ currentTarget: { value: rawValue } }) => {
+      const value = rawValue.toLocaleLowerCase();
       if (hexRegex.test(value)) {
         colorsStore.updateColors(ColorFormat.Hex, value as Hex);
       }

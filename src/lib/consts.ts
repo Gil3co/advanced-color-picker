@@ -14,7 +14,7 @@ export const colorFormats = new Set(
   Object.keys(ColorFormat),
 ) as Set<ColorFormat>;
 
-export const hexRegex = /#[0-9a-f]{6}/;
+export const hexRegex = /#[0-9a-fA-F]{6}/;
 
 export const hslMaxValuePerKey: Record<keyof HSL, number> = {
   hue: 360,
