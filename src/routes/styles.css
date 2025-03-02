@@ -1,9 +1,21 @@
 * {
     box-sizing: border-box;
+    color: var(--dark-gray);
+}
+
+:root {
+    --lightest-gray: hsl(209 4% 95%);
+    --light-gray: hsl(209 4% 88%);
+    --gray: hsl(209 4% 65%);
+    --dark-gray: hsl(209 4% 30%);
+
+    /* primary related */
+    --primary-4: hsl(209 88% 61%);
+    --primary-3: hsl(209 88% 51%);
 }
 
 body {
-    background-color: #e5e5e6;
+    background-color: var(--lightest-gray)
 }
 
 button {
@@ -15,4 +27,8 @@ button {
 
 input {
     border: unset
+}
+
+input:focus {
+    outline: 1px solid var(--gray);
 }

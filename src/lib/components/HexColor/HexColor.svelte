@@ -33,7 +33,7 @@
   }
 
   .hex {
-    background-color: #e5e5e6;
+    background-color: white;
     text-align: center;
     border-radius: 4px;
     width: 5rem;

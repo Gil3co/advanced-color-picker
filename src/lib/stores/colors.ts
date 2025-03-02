@@ -46,6 +46,10 @@ const createStore = (color: Color) => {
         },
       };
     });
+    document.documentElement.style.setProperty(
+      '--hsl',
+      colorToString(finalUpdate, ColorFormat.HSL),
+    );
   };
 
   return { set, updateColors, subscribe };

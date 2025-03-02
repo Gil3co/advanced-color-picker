@@ -38,4 +38,6 @@ const getContrastRatio = (hsl: HSL, hex2: string): number => {
 };
 
 export const getOptimalTextColor = (backgroundColor: HSL): string =>
-  getContrastRatio(backgroundColor, '#000000') >= 4.5 ? '#000000' : '#ffffff';
+  getContrastRatio(backgroundColor, '#000000') >= 4.5
+    ? 'var(--dark-gray)'
+    : '#ffffff';

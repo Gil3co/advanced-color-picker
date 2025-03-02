@@ -35,6 +35,8 @@
         if (!shouldShowRgb && !newValue) return;
         shouldShowHsl = !shouldShowHsl;
       }}
+      style:--background-color={colorToString(primaryColor, ColorFormat.HSL)}
+      class={`scheme-option ${shouldShowHsl ? '' : 'unselected'}`}
     >
       <span>HSL</span>
       {#if shouldShowHsl}
@@ -49,6 +51,7 @@
         if (!shouldShowHsl && !newValue) return;
         shouldShowRgb = !shouldShowRgb;
       }}
+      class={`scheme-option ${shouldShowRgb ? '' : 'unselected'}`}
     >
       <span>RGB</span>
       {#if shouldShowRgb}
@@ -71,7 +74,8 @@
 <style>
   .pickers {
     margin: 0 15rem;
-    background-color: white;
+    background-color: var(--light-gray);
+    border: 1px solid var(--gray);
     padding: 1rem;
     border-radius: 12px;
     display: flex;
@@ -96,10 +100,28 @@
     column-gap: 1rem;
   }
 
-  button {
+  button.scheme-option {
     display: flex;
     align-items: center;
     column-gap: 0.25rem;
+    background-color: var(--primary-4);
+    border-radius: 8px;
+    padding: 0.25rem;
+    box-shadow:
+      0 4px 6px rgba(0, 0, 0, 0.7),
+      0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  button.unselected {
+    background-color: hsl(209 36% 61%);
+  }
+
+  button.scheme-option:hover {
+    background-color: var(--primary-3);
+  }
+  button.scheme-option > span {
+    color: var(--lightest-gray);
+    /* figure out! */
   }
 
   .color-schemes {

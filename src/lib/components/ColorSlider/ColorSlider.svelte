@@ -30,6 +30,9 @@
     {step}
     {value}
     style:--bg-color={bgColor}
+    style:--red={primaryColor.rgb.red}
+    style:--green={primaryColor.rgb.green}
+    style:--blue={primaryColor.rgb.red}
     oninput={onInput}
   />
   <input
@@ -51,7 +54,6 @@
   }
   input[type='range'] {
     background: var(--bg-color);
-    -webkit-appearance: none;
     appearance: none;
     height: 1.25rem;
     width: 100%;
@@ -60,12 +62,23 @@
 
   input[type='range']::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
+    width: 25px;
+    height: 25px;
     border-radius: 50%;
-    background: #fff;
-    border: 2px solid #ccc;
-    cursor: pointer;
+    box-shadow:
+      0 0 0 3px rgba(var(--red), var(--green), var(--blue), 0.3) inset,
+      0 0 0 3px rgba(255, 255, 255, 1) inset,
+      0 0 0 4px rgb(0 0 0 / 0.5) inset,
+      0 0 0 1px rgb(0 0 0 / 0.5);
+    cursor: ew-resize;
+    transition: box-shadow 0.2s;
+  }
+  input[type='range']:hover::-webkit-slider-thumb {
+    box-shadow:
+      0 0 0 3px rgba(var(--red), var(--green), var(--blue), 0.1) inset,
+      0 0 0 3px rgba(255, 255, 255, 1) inset,
+      0 0 0 4px rgb(0 0 0 / 0.5) inset,
+      0 0 0 1px rgb(0 0 0 / 0.5);
   }
 
   input[type='range']:focus {
