@@ -3,13 +3,10 @@ import type { Color } from '$lib/types';
 
 type ColorValue = string | number;
 
-type ColorProp =
-  // ((value: number) => number)
-  ColorValue | ColorValue[];
+type ColorProp = ColorValue | ColorValue[];
 
 const calculateVal = (colorProp: ColorProp, index: number): ColorValue => {
   if (Array.isArray(colorProp)) return colorProp[index];
-  // if (typeof colorProp === 'function') return colorProp(index);
   return colorProp;
 };
 
@@ -27,11 +24,7 @@ const calculateInputBg = ({
   const grad = [];
   for (let i = 0; i < steps; i += 1) {
     const colorVals = props.map((val) => calculateVal(val, i)).join(' ');
-    // if (alpha) {
     grad.push(`${type}(${colorVals} / ${calculateVal(alpha, i)})`);
-    // } else {
-    //   grad.push(`${type}(${colorVals})`);
-    // }
   }
   return `linear-gradient(to right, ${grad.join(', ')})`;
 };

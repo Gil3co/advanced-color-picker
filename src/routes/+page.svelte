@@ -121,7 +121,6 @@
   }
   button.scheme-option > span {
     color: var(--lightest-gray);
-    /* figure out! */
   }
 
   .color-schemes {
