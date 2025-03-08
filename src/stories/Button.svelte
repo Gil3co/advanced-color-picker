@@ -13,8 +13,14 @@
     /** The onclick event handler */
     onClick?: () => void;
   }
-  
-  const { primary = false, backgroundColor, size = 'medium', label, onClick }: Props = $props();
+
+  const {
+    primary = false,
+    backgroundColor,
+    size = 'medium',
+    label,
+    onClick,
+  }: Props = $props();
 </script>
 
 <button
